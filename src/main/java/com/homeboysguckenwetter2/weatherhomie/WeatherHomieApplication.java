@@ -28,7 +28,6 @@ public class WeatherHomieApplication {
     @Bean
     public CommandLineRunner commandLineRunner(WeatherService weatherService) {
         return args -> {
-            System.out.println(weatherService.getTimeAndTemp());
             weatherService.printTimeAndTemp();
         };
     }
