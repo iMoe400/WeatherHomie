@@ -2,6 +2,11 @@ HELP.md
 target/
 !**/src/main/**/target/
 !**/src/test/**/target/
+.pom.xml
+pom.xml
+mvnw
+mvnw.cmd
+.mvn
 
 ### STS ###
 .apt_generated
