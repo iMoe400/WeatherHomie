@@ -7,4 +7,7 @@ public record TimeList(List<LocalDateTime> time) {
     public LocalDateTime getTime(int i) {
         return time.get(i);
     }
+    public int getLength() {
+        return time.size();
+    }
 }
