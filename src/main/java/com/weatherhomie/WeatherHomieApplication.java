@@ -1,7 +1,7 @@
-package com.homeboysguckenwetter2.weatherhomie;
+package com.weatherhomie;
 
-import com.homeboysguckenwetter2.weatherhomie.controller.WeatherController;
-import com.homeboysguckenwetter2.weatherhomie.services.WeatherService;
+import com.weatherhomie.controller.WeatherController;
+import com.weatherhomie.services.WeatherService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

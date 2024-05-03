@@ -1,4 +1,4 @@
-package com.homeboysguckenwetter2.weatherhomie;
+package com.weatherhomie;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

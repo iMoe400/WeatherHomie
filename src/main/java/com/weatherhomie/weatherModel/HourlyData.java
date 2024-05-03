@@ -1,4 +1,4 @@
-package com.homeboysguckenwetter2.weatherhomie.weatherModel;
+package com.weatherhomie.weatherModel;
 
 import java.time.LocalDateTime;
 import java.util.List;

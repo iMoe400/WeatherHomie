@@ -1,9 +1,9 @@
-package com.homeboysguckenwetter2.weatherhomie.services;
+package com.weatherhomie.services;
 
 
-import com.homeboysguckenwetter2.weatherhomie.controller.WeatherController;
-import com.homeboysguckenwetter2.weatherhomie.weatherModel.TempList;
-import com.homeboysguckenwetter2.weatherhomie.weatherModel.TimeList;
+import com.weatherhomie.controller.WeatherController;
+import com.weatherhomie.weatherModel.TempList;
+import com.weatherhomie.weatherModel.TimeList;
 
 public class WeatherService {
     WeatherController weatherController = new WeatherController();

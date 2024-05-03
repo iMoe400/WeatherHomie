@@ -1,6 +1,6 @@
-package com.homeboysguckenwetter2.weatherhomie.controller;
+package com.weatherhomie.controller;
 
-import com.homeboysguckenwetter2.weatherhomie.weatherModel.ForecastData;
+import com.weatherhomie.weatherModel.ForecastData;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 

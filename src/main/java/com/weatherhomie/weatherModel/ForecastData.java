@@ -1,4 +1,4 @@
-package com.homeboysguckenwetter2.weatherhomie.weatherModel;
+package com.weatherhomie.weatherModel;
 
 public record ForecastData(double latitude,
                            double longitude,
