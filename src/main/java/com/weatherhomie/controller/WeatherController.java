@@ -1,11 +1,11 @@
 package com.weatherhomie.controller;
 
 import com.weatherhomie.weatherModel.ForecastData;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
 
 
-@Service
+@Controller
 public class WeatherController {
 
     public WeatherController() {
