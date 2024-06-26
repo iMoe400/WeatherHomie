@@ -1,15 +1,72 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>forecast</title>
+    <title>Wetterseite</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .current-weather {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .forecast {
+            overflow-x: auto;
+            white-space: nowrap;
+            margin-bottom: 20px;
+        }
+        .forecast-item {
+            display: inline-block;
+            vertical-align: top;
+            padding: 10px;
+            margin: 0 5px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .map-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .map {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
 <body>
-<h1>Weather Forecast</h1>
-<div th:each="time : ${currentTime}">
-    <div th:each="temp : ${currentTemp}">
-        <p>Time: <span th:text="${currentTime}"></span></p>
-        <p>Temperature: <span th:text="${currentTemp}"></span></p>
+<div class="container">
+    <div class="current-weather">
+        <h1>Uhrzeit: <span th:text="${currentTime}"></span></h1>
+        <h2>Temperatur: <span th:text="${currentTemp}"></span> °C</h2>
+    </div>
+
+    <div class="forecast">
+        <h3>Vorhersage für die kommenden Stunden:</h3>
+
+        <div th:each="timeItem : ${tempMap.map().keySet()}" class="forecast-item">
+            <h4><span th:text="${timeItem.toLocalTime()}"></span></h4>
+            <h4><span th:text="${tempMap.map().get(timeItem)}"></span></h4>
+        </div>
+    </div>
+
+    <div class="map-container">
+        <h3>Wetterkarte:</h3>
+        <img th:src="${weatherMapUrl}" alt="Wetterkarte" class="map">
     </div>
 </div>
 </body>
