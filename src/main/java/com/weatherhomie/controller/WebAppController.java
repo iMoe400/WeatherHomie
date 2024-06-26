@@ -34,14 +34,12 @@ public class WebAppController {
         System.out.println();
         System.out.println(dateTime);
 
-        //Capital Time/Temp
+        //Capital Time/Temp and Todays Forecast
         model.addAttribute("currentTime", currentTime);
         model.addAttribute("currentTemp", weatherService.getCurrentHourTemp());
         model.addAttribute("pageTitle", "Weather Forecast");
         model.addAttribute("timeList", timeList);
         model.addAttribute("tempMap", timeAndTempDayMap);
-
-        //Next Hours forecast
 
 
         //WeatherMap
