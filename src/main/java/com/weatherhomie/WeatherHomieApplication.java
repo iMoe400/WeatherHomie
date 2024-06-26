@@ -1,6 +1,6 @@
 package com.weatherhomie;
 
-import com.weatherhomie.services.WeatherService;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,9 +14,8 @@ public class WeatherHomieApplication {
     }
 
     @Bean
-    public CommandLineRunner commandLineRunner(WeatherService weatherService) {
+    public CommandLineRunner commandLineRunner() {
         return args -> {
-            weatherService.printTimeAndTemp();
 
         };
     }
