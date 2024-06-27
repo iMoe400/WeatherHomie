@@ -20,9 +20,6 @@ public class WeatherService {
     WeatherController weatherController = new WeatherController();
 
 
-    public LocalTime getCurrentTime() {
-        return LocalTime.now();
-    }
 
     public double getCurrentHourTemp() {
         double currentHourTemp = 0;
@@ -37,10 +34,6 @@ public class WeatherService {
         }
 
         return currentHourTemp;
-    }
-
-    public TempList getTempList() {
-        return new TempList(weatherController.getForecastData().hourly().temperature_2m());
     }
 
     public TimeList getTimeList() {

@@ -1,7 +1,7 @@
 package com.weatherhomie.models.weatherModel.forecastData;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+
 import java.util.List;
 
 public record HourlyData(List<LocalDateTime> time, List<Double> temperature_2m) {

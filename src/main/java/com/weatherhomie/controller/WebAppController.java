@@ -1,7 +1,5 @@
 package com.weatherhomie.controller;
 
-import com.weatherhomie.models.cityModel.Cities;
-import com.weatherhomie.models.cityModel.City;
 import com.weatherhomie.services.WeatherService;
 import com.weatherhomie.models.weatherModel.timeAndTempMaps.TimeTempMapToday;
 import com.weatherhomie.models.weatherModel.forecastData.TimeList;
@@ -10,10 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Controller
 public class WebAppController {
@@ -30,8 +26,6 @@ public class WebAppController {
     }
 
     LocalDateTime currentTime = LocalDateTime.now().withNano(0).withSecond(0);
-
-
 
 
     @GetMapping("/weather")
