@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Suchergebnisse</title>
+</head>
+<body>
+<div th:fragment="searchResultList">
+    <div th:each="city : ${cities}">
+        <div class="search-item">
+            <a th:href="@{/city/{stadt}(stadt=${city.name})}" th:text="${city.name + ', ' + city.country}"></a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

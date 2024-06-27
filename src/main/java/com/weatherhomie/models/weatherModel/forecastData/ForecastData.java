@@ -1,4 +1,4 @@
-package com.weatherhomie.weatherModel.forecastData;
+package com.weatherhomie.models.weatherModel.forecastData;
 
 public record ForecastData( double latitude,
                             double longitude,

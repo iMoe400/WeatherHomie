@@ -1,4 +1,4 @@
-package com.weatherhomie.weatherModel.forecastData;
+package com.weatherhomie.models.weatherModel.forecastData;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;

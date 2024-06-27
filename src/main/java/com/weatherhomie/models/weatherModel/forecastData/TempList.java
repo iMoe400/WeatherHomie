@@ -1,4 +1,4 @@
-package com.weatherhomie.weatherModel.forecastData;
+package com.weatherhomie.models.weatherModel.forecastData;
 
 import java.util.List;
 
