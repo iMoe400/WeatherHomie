@@ -1,7 +1,7 @@
 package com.weatherhomie.services;
 
 
-import com.weatherhomie.controller.WeatherController;
+import com.weatherhomie.endpoint.WeatherEndpoint;
 import com.weatherhomie.models.cityModel.City;
 import com.weatherhomie.models.weatherModel.TodaysData;
 import com.weatherhomie.models.weatherModel.forecastData.TempList;
@@ -17,13 +17,13 @@ import java.util.*;
 public class WeatherService {
 
 
-    WeatherController weatherController = new WeatherController();
+    WeatherEndpoint weatherEndpoint = new WeatherEndpoint();
 
 
 
     public double getCurrentHourTemp() {
         double currentHourTemp = 0;
-        TodaysData todayData = weatherController.getTodayData();
+        TodaysData todayData = weatherEndpoint.getTodayData();
         TempList tempList = new TempList(todayData.hourly().temperature_2m());
         TimeList timeList = new TimeList(todayData.hourly().time());
         for(int i = 0; i < tempList.temperature_2m().size(); i++) {
@@ -38,14 +38,14 @@ public class WeatherService {
 
     public TimeList getTimeList() {
 
-        return new TimeList(weatherController.getForecastData().hourly().time());
+        return new TimeList(weatherEndpoint.getForecastData().hourly().time());
 
     }
 
 
-    public TimeTempMapToday getTimeAndTempDay(City city) {
-        TimeList timeList = new TimeList(weatherController.getForecastForCity(city).hourly().time());
-        TempList tempList = new TempList(weatherController.getForecastForCity(city).hourly().temperature_2m());
+    public TimeTempMapToday getDaysTempByCity(City city) {
+        TimeList timeList = new TimeList(weatherEndpoint.getForecastForCity(city).hourly().time());
+        TempList tempList = new TempList(weatherEndpoint.getForecastForCity(city).hourly().temperature_2m());
         int countAday = 0;
         Map<LocalDateTime, Double> timeAndTempMap = new LinkedHashMap<>();
         for (int i = 0; i < timeList.time().size(); i++) {
@@ -56,10 +56,13 @@ public class WeatherService {
                 countAday++;
                 timeAndTempMap.put(time.withNano(0).withSecond(0), tempList.temperature_2m().get(i));
             }
-
-
         }
         return new TimeTempMapToday(timeAndTempMap);
+    }
+
+    public String getCurrentHourTempByCity(City city) {
+        TempList tempList = new TempList(weatherEndpoint.getForecastForCity(city).hourly().temperature_2m());
+        return tempList.temperature_2m().getFirst().toString();
     }
 
 

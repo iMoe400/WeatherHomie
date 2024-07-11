@@ -1,5 +1,6 @@
 package com.weatherhomie.controller;
 
+import com.weatherhomie.endpoint.CItyEndpoint;
 import com.weatherhomie.models.cityModel.Cities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,16 +13,16 @@ import java.util.List;
 @Controller
 public class SearchController {
 
-    private final CityController cityController;
+    private final com.weatherhomie.endpoint.CItyEndpoint CItyEndpoint;
 
     @Autowired
-    public SearchController(CityController cityController) {
-        this.cityController = cityController;
+    public SearchController(CItyEndpoint CItyEndpoint) {
+        this.CItyEndpoint = CItyEndpoint;
     }
 
     @GetMapping("/search")
     public String searchCities(@RequestParam String q, Model model) {
-        List<Cities> cities = cityController.searchCityByName(q).results();
+        List<Cities> cities = CItyEndpoint.searchCityByName(q).results();
         model.addAttribute("cities", cities);
         return "searchResultList"; // Thymeleaf fragment name
     }

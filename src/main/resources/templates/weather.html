@@ -1,8 +1,13 @@
 <!DOCTYPE html>
 <html lang="de" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <meta charset="UTF-8">
     <title>Wetterseite</title>
+    
+    <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -64,7 +69,9 @@
 <div class="container">
     <div class="search-container">
         <form id="search-form" action="/search" method="get">
-            <input type="text" name="q" placeholder="Stadt suchen...">
+            <label>
+                <input type="text" name="q" placeholder="Stadt suchen...">
+            </label>
         </form>
     <h3><span th:text="${cityName}"></span></h3>
     <h1><span th:text="${currentTime.toLocalDate()}"></span></h1>

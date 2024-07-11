@@ -1,4 +1,4 @@
-package com.weatherhomie.controller;
+package com.weatherhomie.endpoint;
 
 import com.weatherhomie.models.cityModel.City;
 import com.weatherhomie.models.weatherModel.TodaysData;
@@ -8,9 +8,9 @@ import org.springframework.web.client.RestTemplate;
 
 
 @Controller
-public class WeatherController {
+public class WeatherEndpoint {
 
-    public WeatherController() {
+    public WeatherEndpoint() {
     }
 
     public ForecastData getForecastData() {
@@ -36,6 +36,9 @@ public class WeatherController {
         String apiUrl = "https://geocoding-api.open-meteo.com/v1/get?id=" + id;
         return restTemplate.getForObject(apiUrl, City.class);
     }
+
+
+
 
 
 }

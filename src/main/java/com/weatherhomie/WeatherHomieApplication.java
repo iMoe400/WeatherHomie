@@ -1,8 +1,8 @@
 package com.weatherhomie;
 
 
-import com.weatherhomie.controller.CityController;
-import com.weatherhomie.controller.WeatherController;
+import com.weatherhomie.endpoint.CItyEndpoint;
+import com.weatherhomie.endpoint.WeatherEndpoint;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,12 +15,6 @@ public class WeatherHomieApplication {
         SpringApplication.run(WeatherHomieApplication.class, args);
     }
 
-    @Bean
-    public CommandLineRunner commandLineRunner(WeatherController weatherController) {
-        return args -> {
-            CityController cityController = new CityController(weatherController);
-            System.out.println(cityController.searchCityByName("Berlin"));
-        };
-    }
+
 
 }
