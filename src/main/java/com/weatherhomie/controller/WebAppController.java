@@ -52,6 +52,8 @@ public class WebAppController {
         model.addAttribute("cities", cities.results());
     }
 
+
+
     private String prepareWeatherModel(int cityId, Model model) {
         City city = cityService.getCityById(cityId);
         ForecastData forecastData = weatherService.getForecastForCity(city);
@@ -60,8 +62,9 @@ public class WebAppController {
         ZonedDateTime currentTime = ZonedDateTime.now(zoneId);
         LocalDateTime localDateTime = currentTime.toLocalDateTime();
 
+
         model.addAttribute("cityName", city.name());
-        model.addAttribute("currentTime", localDateTime.toLocalTime().withMinute(0).withSecond(0).withNano(0));
+        model.addAttribute("currentTime", localDateTime.toLocalTime().withNano(0).withSecond(0));
         model.addAttribute("currentTemp", timeAndTempDayMap.map().values().toArray()[0]);
         model.addAttribute("pageTitle", "Weather Forecast");
         model.addAttribute("timeList", forecastData.hourly().time());
