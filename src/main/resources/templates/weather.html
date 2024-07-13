@@ -4,10 +4,10 @@
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <meta charset="UTF-8">
     <title>Wetterseite</title>
-    
+
     <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
     <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
-    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -46,6 +46,15 @@
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         }
 
+        .input {
+            display: inline-block;
+            vertical-align: top;
+            margin: 0 5px;
+            background-color: lightgray;
+            border-radius: 8px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+
         .map-container {
             margin-top: 20px;
             text-align: center;
@@ -56,27 +65,29 @@
             height: auto;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        } .search-container {
-              text-align: center;
-              margin-bottom: 20px;
-          }
+        }
+
+        .search-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
     </style>
     <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
     <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
-    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
 </head>
 <body>
 <div class="container">
     <div class="search-container">
         <form id="search-form" action="/search" method="get">
             <label>
-                <input type="text" name="q" placeholder="Stadt suchen...">
+                <input class="input" type="text" name="q" placeholder="Stadt suchen...">
             </label>
         </form>
-    <h3><span th:text="${cityName}"></span></h3>
-    <h1><span th:text="${currentTime.toLocalDate()}"></span></h1>
+        <h1 style="margin-top: 50px"><span th:text="${cityName}"></span></h1>
+        <h2><span th:text="${currentTime}"></span></h2>
+    </div>
     <div class="current-weather">
-        <h1><span th:text="${currentTime.toLocalTime().withSecond(0).withNano(0)}"></span></h1>
         <h2><span th:text="${currentTemp}"></span> °C</h2>
     </div>
 
@@ -93,6 +104,7 @@
         <h3>Wetterkarte:</h3>
         <img th:src="${weatherMapUrl}" alt="Wetterkarte" class="map">
     </div>
+
 </div>
 </body>
 </html>
