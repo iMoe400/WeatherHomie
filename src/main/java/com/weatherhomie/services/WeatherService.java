@@ -1,70 +1,53 @@
 package com.weatherhomie.services;
 
 
-import com.weatherhomie.endpoint.WeatherEndpoint;
 import com.weatherhomie.models.cityModel.City;
-import com.weatherhomie.models.weatherModel.TodaysData;
+import com.weatherhomie.models.weatherModel.forecastData.ForecastData;
 import com.weatherhomie.models.weatherModel.forecastData.TempList;
 import com.weatherhomie.models.weatherModel.forecastData.TimeList;
 import com.weatherhomie.models.weatherModel.timeAndTempMaps.TimeTempMapToday;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.*;
 
 @Service
 public class WeatherService {
 
 
-    WeatherEndpoint weatherEndpoint = new WeatherEndpoint();
-
-
-
-    public double getCurrentHourTemp() {
-        double currentHourTemp = 0;
-        TodaysData todayData = weatherEndpoint.getTodayData();
-        TempList tempList = new TempList(todayData.hourly().temperature_2m());
-        TimeList timeList = new TimeList(todayData.hourly().time());
-        for(int i = 0; i < tempList.temperature_2m().size(); i++) {
-            if (timeList.getTime(i).toLocalTime().equals(LocalTime.now().withMinute(0).withSecond(0).withNano(0))) {
-                currentHourTemp = tempList.temperature_2m().get(i);
-                System.out.println(currentHourTemp);
-            }
-        }
-
-        return currentHourTemp;
-    }
-
-    public TimeList getTimeList() {
-
-        return new TimeList(weatherEndpoint.getForecastData().hourly().time());
-
+    public ForecastData getForecastForCity(City city) {
+        RestTemplate restTemplate = new RestTemplate();
+        String apiUrl = "https://api.open-meteo.com/v1/forecast?latitude="
+                + city.latitude()
+                + "&longitude="
+                + city.longitude()
+                + "&hourly=temperature_2m&timezone="
+                + city.timezone();
+        System.out.println(city.timezone() + city.latitude() + "   " + city.longitude());
+        return (restTemplate.getForObject(apiUrl, ForecastData.class));
     }
 
 
     public TimeTempMapToday getDaysTempByCity(City city) {
-        TimeList timeList = new TimeList(weatherEndpoint.getForecastForCity(city).hourly().time());
-        TempList tempList = new TempList(weatherEndpoint.getForecastForCity(city).hourly().temperature_2m());
-        int countAday = 0;
+        ForecastData forecastData = getForecastForCity(city);
+        TimeList timeList = new TimeList(getForecastForCity(city).hourly().time());
+        TempList tempList = new TempList(getForecastForCity(city).hourly().temperature_2m());
+        int cnt = 0;
+        System.out.println(city.timezone() + "2");
         Map<LocalDateTime, Double> timeAndTempMap = new LinkedHashMap<>();
         for (int i = 0; i < timeList.time().size(); i++) {
-            LocalDateTime time = timeList.time().get(i).withMinute(0).withSecond(0).withNano(0);
-            LocalDateTime now = LocalDateTime.now();
+            ZoneId zoneId = ZoneId.of(forecastData.timezone());
+            ZonedDateTime currentTime = ZonedDateTime.now(zoneId);
 
-            if(time.isAfter(now) && countAday < 24){
-                countAday++;
-                timeAndTempMap.put(time.withNano(0).withSecond(0), tempList.temperature_2m().get(i));
+            if (timeList.time().get(i).isAfter(currentTime.toLocalDateTime()) && cnt < 24) {
+                cnt += 1;
+                LocalDateTime localDateTime = timeList.time().get(i);
+                timeAndTempMap.put(localDateTime, tempList.temperature_2m().get(i));
             }
         }
         return new TimeTempMapToday(timeAndTempMap);
     }
-
-    public String getCurrentHourTempByCity(City city) {
-        TempList tempList = new TempList(weatherEndpoint.getForecastForCity(city).hourly().temperature_2m());
-        return tempList.temperature_2m().getFirst().toString();
-    }
-
 
 
 }

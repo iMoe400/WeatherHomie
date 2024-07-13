@@ -6,9 +6,9 @@
 </head>
 <body>
 <div th:fragment="searchResultList">
-    <div th:each="city : ${cities}">
+    <div th:each="result : ${cities}">
         <div class="search-item">
-            <a th:href="@{/city/{stadt}(stadt=${city.name})}" th:text="${city.name + ', ' + city.country}"></a>
+            <a th:href="@{/city/{stadt}(stadt=${result.id()})}" th:text="${result.name() + ', ' + result.country()}"></a>
         </div>
     </div>
 </div>

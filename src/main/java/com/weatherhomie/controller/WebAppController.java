@@ -1,76 +1,74 @@
 package com.weatherhomie.controller;
 
-import com.weatherhomie.endpoint.CItyEndpoint;
-import com.weatherhomie.endpoint.WeatherEndpoint;
-import com.weatherhomie.models.weatherModel.forecastData.TempList;
+import com.weatherhomie.models.cityModel.Cities;
+import com.weatherhomie.models.cityModel.City;
+import com.weatherhomie.models.weatherModel.forecastData.ForecastData;
+import com.weatherhomie.services.CityService;
 import com.weatherhomie.services.WeatherService;
 import com.weatherhomie.models.weatherModel.timeAndTempMaps.TimeTempMapToday;
-import com.weatherhomie.models.weatherModel.forecastData.TimeList;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 
 @Controller
 public class WebAppController {
 
     private final WeatherService weatherService;
-    private final com.weatherhomie.endpoint.CItyEndpoint CItyEndpoint;
-    private final WeatherEndpoint weatherEndpoint;
+    private final CityService cityService;
 
-    public WebAppController(@Qualifier("weatherService") WeatherService weatherService, @Qualifier("CItyEndpoint") CItyEndpoint CItyEndpoint, WeatherEndpoint weatherEndpoint) {
+    public WebAppController(@Qualifier("weatherService") WeatherService weatherService, CityService cityService) {
         this.weatherService = weatherService;
-        this.CItyEndpoint = CItyEndpoint;
-        this.weatherEndpoint = weatherEndpoint;
+        this.cityService = cityService;
     }
-
-
-    LocalDateTime currentTime = LocalDateTime.now().withNano(0).withSecond(0);
-
 
     @GetMapping("/weather")
     public String weather(Model model) {
-
-        TimeList timeList = weatherService.getTimeList();
-        TimeTempMapToday timeAndTempDayMap = weatherService.getDaysTempByCity(weatherEndpoint.getCityById(CItyEndpoint.getCityLatLong("Berlin").results().getFirst().id()));
-        LocalDateTime dateTime = LocalDateTime.now().withNano(0).withSecond(0).withMinute(0);
-        System.out.println();
-        System.out.println(timeAndTempDayMap);
-        System.out.println(dateTime);
-
-        //Capital Time/Temp
-        model.addAttribute("cityName", "Berlin");
-        model.addAttribute("currentTime", currentTime);
-        model.addAttribute("currentTemp", weatherService.getCurrentHourTemp());
-        model.addAttribute("pageTitle", "Weather Forecast");
-        model.addAttribute("timeList", timeList);
-        model.addAttribute("tempMap", timeAndTempDayMap);
-
-
-        return "weather";
+        String cityName = "Berlin";
+        City city = cityService.getListOfCityObjByName(cityName).results().getFirst();
+        return prepareWeatherModel(city.id(), model);
     }
 
     @GetMapping("/city/{stadt}")
-    public String showCityDetails(@PathVariable String stadt, Model model) {
-        String cityNam = stadt;
-        String currentTemp = weatherService.getCurrentHourTempByCity(weatherEndpoint.getCityById(CItyEndpoint.getCityLatLong(stadt).results().getFirst().id()));
-        TimeList timeList = weatherService.getTimeList();
-        TimeTempMapToday timeAndTempDayMap = weatherService.getDaysTempByCity(weatherEndpoint.getCityById(CItyEndpoint.getCityLatLong(stadt).results().getFirst().id()));
-        LocalDateTime dateTime = LocalDateTime.now().withNano(0).withSecond(0).withMinute(0);
-        System.out.println(timeAndTempDayMap);
-        System.out.println("du nutte");
-        System.out.println(dateTime);
-        TimeTempMapToday timeAndTemp = new TimeTempMapToday(weatherService.getDaysTempByCity(weatherEndpoint.getCityById(CItyEndpoint.getCityLatLong(stadt).results().getFirst().id())).map());
-        model.addAttribute("currentCityName", cityNam);
-        model.addAttribute("currentTime", currentTime);
-        model.addAttribute("currentTemp", currentTemp);
+    public String showCityDetails(@PathVariable int stadt, Model model) {
+        return prepareWeatherModel(stadt, model);
+    }
+
+    @GetMapping("/search")
+    public String searchCities(@RequestParam String q, Model model) {
+        Cities cities = new Cities(cityService.getListOfCityObjByName(q).results());
+        prepareSearchModel(cities, model);
+        return "searchResultList";
+    }
+
+    private void prepareSearchModel(Cities cities, Model model) {
+        model.addAttribute("cities", cities.results());
+    }
+
+    private String prepareWeatherModel(int cityId, Model model) {
+        City city = cityService.getCityById(cityId);
+        ForecastData forecastData = weatherService.getForecastForCity(city);
+        TimeTempMapToday timeAndTempDayMap = weatherService.getDaysTempByCity(city);
+        ZoneId zoneId = ZoneId.of(forecastData.timezone());
+        ZonedDateTime currentTime = ZonedDateTime.now(zoneId);
+        LocalDateTime localDateTime = currentTime.toLocalDateTime();
+
+        model.addAttribute("cityName", city.name());
+        model.addAttribute("currentTime", localDateTime.toLocalTime().withMinute(0).withSecond(0).withNano(0));
+        model.addAttribute("currentTemp", timeAndTempDayMap.map().values().toArray()[0]);
         model.addAttribute("pageTitle", "Weather Forecast");
-        model.addAttribute("timeList", timeList);
+        model.addAttribute("timeList", forecastData.hourly().time());
         model.addAttribute("tempMap", timeAndTempDayMap);
+
         return "weather";
     }
+
 
 }

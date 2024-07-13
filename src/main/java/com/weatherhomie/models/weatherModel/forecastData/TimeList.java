@@ -6,7 +6,4 @@ import java.util.List;
 
 public record TimeList(List<LocalDateTime> time) {
 
-    public LocalDateTime getTime(int i) {
-        return time.get(i);
-    }
 }
