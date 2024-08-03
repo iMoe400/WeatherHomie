@@ -36,6 +36,11 @@
             margin-bottom: 20px;
         }
 
+        .icon {
+            height: 50px;
+            width: 50px;
+        }
+
         .forecast-item {
             display: inline-block;
             vertical-align: top;
@@ -84,11 +89,14 @@
                 <input class="input" type="text" name="q" placeholder="Stadt suchen...">
             </label>
         </form>
-        <h1 style="margin-top: 50px"><span th:text="${cityName}"></span></h1>
-        <h2><span th:text="${currentTime}"></span></h2>
     </div>
     <div class="current-weather">
-        <h2><span th:text="${currentTemp}"></span> °C</h2>
+        <h1 style="margin-top: 50px"><span th:text="${cityName}"></span></h1>
+        <h2><span th:text="${currentTime}"></span></h2>
+        <div style="display: flex; align-items: center; justify-content: center">
+            <h2><span th:text="${currentTemp}"></span> °C  |</h2>
+            <img th:src="@{${weatherIcon}}" class="icon" alt="Weather Icon"/>
+        </div>
     </div>
 
     <div class="forecast">

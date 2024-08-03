@@ -1,2 +1,47 @@
-package com.weatherhomie.models.weatherModel.forecastData;public record HourlyUnits() {
+package com.weatherhomie.models.weatherModel.forecastData;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+
+public record HourlyUnits(
+                          @JsonProperty("temperature_2m") String temperature2m,
+                          @JsonProperty("relative_humidity_2m") String relativeHumidity2m,
+                          @JsonProperty("dew_point_2m") String dewPoint2m,
+                          @JsonProperty("apparent_temperature") String apparentTemperature,
+                          String precipitation,
+                          String rain,
+                          String showers,
+                          String snowfall,
+                          @JsonProperty("snow_depth") String snowDepth,
+                          @JsonProperty("weather_code") String weatherCode,
+                          @JsonProperty("pressure_msl") String pressureMsl,
+                          @JsonProperty("surface_pressure") String surfacePressure,
+                          @JsonProperty("cloud_cover") String cloudCover,
+                          @JsonProperty("cloud_cover_low") String cloudCoverLow,
+                          @JsonProperty("cloud_cover_mid") String cloudCoverMid,
+                          @JsonProperty("cloud_cover_high") String cloudCoverHigh,
+                          String evapotranspiration,
+                          @JsonProperty("et0_fao_evapotranspiration") String et0FaoEvapotranspiration,
+                          @JsonProperty("vapour_pressure_deficit") String vapourPressureDeficit,
+                          @JsonProperty("wind_speed_10m") String windSpeed10m,
+                          @JsonProperty("wind_speed_80m") String windSpeed80m,
+                          @JsonProperty("wind_speed_120m") String windSpeed120m,
+                          @JsonProperty("wind_speed_180m") String windSpeed180m,
+                          @JsonProperty("wind_direction_10m") String windDirection10m,
+                          @JsonProperty("wind_direction_80m") String windDirection80m,
+                          @JsonProperty("wind_direction_120m") String windDirection120m,
+                          @JsonProperty("wind_direction_180m") String windDirection180m,
+                          @JsonProperty("wind_gusts_10m") String windGusts10m,
+                          @JsonProperty("temperature_80m") String temperature80m,
+                          @JsonProperty("temperature_120m") String temperature120m,
+                          @JsonProperty("temperature_180m") String temperature180m,
+                          @JsonProperty("soil_temperature_0cm") String soilTemperature0cm,
+                          @JsonProperty("soil_temperature_6cm") String soilTemperature6cm,
+                          @JsonProperty("soil_temperature_18cm") String soilTemperature18cm,
+                          @JsonProperty("soil_temperature_54cm") String soilTemperature54cm,
+                          @JsonProperty("soil_moisture_0_to_1cm") String soilMoisture0To1cm,
+                          @JsonProperty("soil_moisture_1_to_3cm") String soilMoisture1To3cm,
+                          @JsonProperty("soil_moisture_3_to_9cm") String soilMoisture3To9cm,
+                          @JsonProperty("soil_moisture_9_to_27cm") String soilMoisture9To27cm,
+                          @JsonProperty("soil_moisture_27_to_81cm") String soilMoisture27To81cm) {
 }
