@@ -6,17 +6,16 @@ import com.weatherhomie.models.weatherModel.forecastData.ForecastData;
 import com.weatherhomie.models.weatherModel.forecastData.TempList;
 import com.weatherhomie.models.weatherModel.forecastData.TimeList;
 import com.weatherhomie.models.weatherModel.timeAndTempMaps.TimeTempMapToday;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.text.DecimalFormat;
 import java.time.*;
 import java.util.*;
 
 @Service
 public class WeatherService {
-
 
 
     public ForecastData getForecastForCity(City city) {
@@ -44,7 +43,7 @@ public class WeatherService {
                 + "precipitation_sum,rain_sum,showers_sum,snowfall_sum,precipitation_hours,"
                 + "precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,"
                 + "wind_direction_10m_dominant,shortwave_radiation_sum,et0_fao_evapotranspiration"
-                + "&models=icon_seamless";
+                + "&models=icon_seamless&forecast_days=10";
 
         return restTemplate.getForObject(apiUrl, ForecastData.class);
 
@@ -80,6 +79,25 @@ public class WeatherService {
         ForecastData forecastData = getForecastForCity(city);
         int isDay = forecastData.current().isDay();
         return isDay != 0;
+    }
+
+    public Map<LocalDate, Double> get10DaysForecastByCity(City city) {
+        Map<LocalDate, Double> mapson = new LinkedHashMap<>();
+
+        DecimalFormat decimalFormat = new DecimalFormat("#");
+        ForecastData forecastData = getForecastForCity(city);
+        List<Double> maxTemp9Days = getForecastForCity(city).daily().temperature2mMax();
+        List<Double> minTemp9Days = getForecastForCity(city).daily().temperature2mMin();
+        Double avg;
+
+        List<LocalDate> date = getForecastForCity(city).daily().time();
+        for (int i = 0; i < 9; i++) {
+            avg = maxTemp9Days.get(i);
+
+            mapson.put(date.get(i), Double.parseDouble(decimalFormat.format(avg)));
+        }
+
+        return mapson;
     }
 
 }

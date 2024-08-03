@@ -79,6 +79,9 @@
     </style>
     <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
     <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
 </head>
 <body>
@@ -99,13 +102,27 @@
         </div>
     </div>
 
-    <div class="forecast">
+    <div>
         <h3>Vorhersage für die kommenden Stunden:</h3>
-
-        <div th:each="timeItem : ${tempMap.map().keySet()}" class="forecast-item">
-            <h4><span th:text="${timeItem.toLocalTime()}"></span></h4>
-            <h4><span th:text="${tempMap.map().get(timeItem)}"></span></h4>
+        <div class="forecast">
+            <div th:each="timeItem : ${tempMap.map().keySet()}" class="forecast-item">
+                <h4><span th:text="${timeItem.toLocalTime()}"></span></h4>
+                <h4><span th:text="${tempMap.map().get(timeItem)}"></span></h4>
+            </div>
         </div>
+
+    </div>
+    <div>
+        <h3>10 Tage vorhersage</h3>
+        <div class="forecast">
+            <div th:each="date : ${tenDaysForecast.keySet()}" class="forecast-item">
+                <h4><span th:text="${date}"></span></h4>
+                <h4><span th:text="${tenDaysForecast.get(date)}"></span></h4>
+
+            </div>
+        </div>
+
+
     </div>
 
     <div class="map-container">
@@ -114,5 +131,26 @@
     </div>
 
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var tempMap = /* Hier musst du deine Temperaturdaten dynamisch aus Thymeleaf oder einer anderen Quelle einfügen */;
+        Object.keys(tempMap).forEach(function(key, index) {
+            var ctx = document.getElementById('chart' + index).getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: tempMap[key].labels,
+                    datasets: [{
+                        label: 'Temperatur',
+                        data: tempMap[key].data,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }]
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>

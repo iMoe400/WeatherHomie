@@ -8,14 +8,18 @@ import com.weatherhomie.services.WeatherIconService;
 import com.weatherhomie.services.WeatherService;
 import com.weatherhomie.models.weatherModel.timeAndTempMaps.TimeTempMapToday;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.*;
 
 
 @Controller
@@ -55,7 +59,6 @@ public class WebAppController {
     }
 
 
-
     private String prepareWeatherModel(int cityId, Model model) {
         City city = cityService.getCityById(cityId);
         ForecastData forecastData = weatherService.getForecastForCity(city);
@@ -64,7 +67,7 @@ public class WebAppController {
         ZonedDateTime currentTime = ZonedDateTime.now(zoneId);
         LocalDateTime localDateTime = currentTime.toLocalDateTime();
         String iconPath = weatherIconService.getWeatherIcon(cityService.getCityById(cityId));
-
+        Map<LocalDate, Double> tenDaysForecast = new LinkedHashMap<>(weatherService.get10DaysForecastByCity(city));
 
 
         model.addAttribute("cityName", city.name());
@@ -74,6 +77,8 @@ public class WebAppController {
         model.addAttribute("timeList", forecastData.hourly().time());
         model.addAttribute("tempMap", timeAndTempDayMap);
         model.addAttribute("weatherIcon", iconPath);
+        model.addAttribute("tenDaysForecast", tenDaysForecast);
+
 
         return "weather";
     }

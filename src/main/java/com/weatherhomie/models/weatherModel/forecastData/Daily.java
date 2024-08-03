@@ -2,10 +2,13 @@ package com.weatherhomie.models.weatherModel.forecastData;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 public record Daily(
+                    @JsonProperty("time") List<LocalDate> time,
                     @JsonProperty("weather_code") List<Integer> weatherCode,
                     @JsonProperty("temperature_2m_max") List<Double> temperature2mMax,
                     @JsonProperty("temperature_2m_min") List<Double> temperature2mMin,
