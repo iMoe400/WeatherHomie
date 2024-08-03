@@ -11,6 +11,7 @@ public class WeatherIconService {
     WeatherIconService(WeatherService weatherService) {
         this.weatherService = weatherService;
     }
+
     private static final String ICON_BASE_PATH = "/reshotIcons/";
 
     public String getWeatherIcon(City city) {
@@ -28,8 +29,7 @@ public class WeatherIconService {
             case 95, 96, 99 -> "reshot-icon-cloud-thunder-FH4EA3J28N.svg";
             default -> "default.svg";
         };
-        // Default icon if none matches
-        System.out.println(ICON_BASE_PATH + iconFilename);
+
         return ICON_BASE_PATH + iconFilename;
     }
 

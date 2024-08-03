@@ -18,7 +18,6 @@ import java.util.*;
 public class WeatherService {
 
 
-
     public ForecastData getForecastForCity(City city) {
         RestTemplate restTemplate = new RestTemplate();
         String apiUrl = "https://api.open-meteo.com/v1/forecast?latitude="

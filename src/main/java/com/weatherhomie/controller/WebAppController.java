@@ -55,7 +55,6 @@ public class WebAppController {
     }
 
 
-
     private String prepareWeatherModel(int cityId, Model model) {
         City city = cityService.getCityById(cityId);
         ForecastData forecastData = weatherService.getForecastForCity(city);
@@ -64,7 +63,6 @@ public class WebAppController {
         ZonedDateTime currentTime = ZonedDateTime.now(zoneId);
         LocalDateTime localDateTime = currentTime.toLocalDateTime();
         String iconPath = weatherIconService.getWeatherIcon(cityService.getCityById(cityId));
-
 
 
         model.addAttribute("cityName", city.name());
