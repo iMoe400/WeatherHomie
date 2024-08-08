@@ -69,7 +69,6 @@ public class WebAppController {
         String iconPath = weatherIconService.getWeatherIcon(cityService.getCityById(cityId));
         Map<LocalDate, Double> tenDaysForecast = new LinkedHashMap<>(weatherService.get10DaysForecastByCity(city));
 
-
         model.addAttribute("cityName", city.name());
         model.addAttribute("currentTime", localDateTime.toLocalTime().withNano(0).withSecond(0));
         model.addAttribute("currentTemp", timeAndTempDayMap.map().values().toArray()[0]);
