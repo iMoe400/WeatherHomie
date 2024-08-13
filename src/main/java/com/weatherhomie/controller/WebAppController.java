@@ -8,7 +8,6 @@ import com.weatherhomie.services.WeatherIconService;
 import com.weatherhomie.services.WeatherService;
 import com.weatherhomie.models.weatherModel.timeAndTempMaps.TimeTempMapToday;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -67,7 +66,7 @@ public class WebAppController {
         ZonedDateTime currentTime = ZonedDateTime.now(zoneId);
         LocalDateTime localDateTime = currentTime.toLocalDateTime();
         String iconPath = weatherIconService.getWeatherIcon(cityService.getCityById(cityId));
-        Map<LocalDate, Double> tenDaysForecast = new LinkedHashMap<>(weatherService.get10DaysForecastByCity(city));
+        Map<String, Double> tenDaysForecast = new LinkedHashMap<>(weatherService.get10DaysForecastByCity(city));
 
         model.addAttribute("cityName", city.name());
         model.addAttribute("currentTime", localDateTime.toLocalTime().withNano(0).withSecond(0));

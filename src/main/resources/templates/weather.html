@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<html lang="de-DE" xmlns:th="http://www.thymeleaf.org">
 <head>
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <meta charset="UTF-8">
     <title>Wetterseite</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
-    <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
-    <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
-    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -65,6 +64,11 @@
             text-align: center;
         }
 
+        .chart-container {
+            position: relative;
+            height: 150px; /* Höhe des Containers verringern */
+        }
+
         .map {
             max-width: 100%;
             height: auto;
@@ -76,15 +80,105 @@
             text-align: center;
             margin-bottom: 20px;
         }
-    </style>
-    <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
-    <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+        .scroll-container {
+            overflow-x: auto; /* Ermöglicht horizontales Scrollen */
+            width: 100%; /* Stellt die Breite des Containers ein */
+        }
+
+        .wide-content {
+            width: 1500px; /* Setze eine feste Breite, die breiter als der Bildschirm ist, wenn nötig */
+        }
+
+        table, canvas {
+            width: 100%; /* Sorgt dafür, dass Tabelle und Canvas dieselbe Breite haben */
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 100% !important; /* Sicherstellen, dass das Canvas die gesamte Höhe ausfüllt */
+        }
+
+        .spass {
+            padding-left: 10px;
+        }
+    </style>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById("myChart").getContext('2d');
+            const labels = /*[[${tempMap.map().keySet()}]]*/ []; // Deine Labels für die Uhrzeiten
+            const data = /*[[${tempMap.map().values()}]]*/ []; // Deine Temperaturwerte
+
+            new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Temperatur',
+                        data: data,
+                        backgroundColor: "rgba(0,0,255,0.5)",
+                        borderColor: "rgba(0,0,255,1)",
+                        fill: true,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    aspectRatio: 10,
+                    scales: {
+                        x: {
+                            display: false, // X-Achse ausblenden
+                            grid: {
+                                display: false, // X-Achsen-Gitterlinien ausblenden
+                            }
+                        },
+                        y: {
+                            display: false,
+                            grid: {
+                                display: false, // Y-Achsen-Gitterlinien ausblenden
+                            },
+                            beginAtZero: false
+                        }
+                    },
+                    plugins: {
+                        datalabels: {
+                            align: 'top',  // Position der Labels auf der Kurve
+                            anchor: 'end',  // Verankerung der Labels
+                            formatter: function(value, context) {
+                                return value + '°C';  // Textformat für die Labels
+                            },
+                            color: '#000',  // Textfarbe
+                            font: {
+                                weight: 'bold'  // Textgewicht
+                            }
+                        },
+                        legend: {
+                            display: false // Verstecke die Legende
+                        }
+                    },
+                    elements: {
+                        point: {
+                            radius: 3 // Zeige die Datenpunkte auf der Linie
+                        },
+                        line: {
+                            tension: 0.4 // Glättung der Linie
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels] // Hinzufügen des Data Labels Plugins
+            });
+        });
+        /*]]>*/
+    </script>
 
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
 </head>
 <body>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+
 <div class="container">
     <div class="search-container">
         <form id="search-form" action="/search" method="get">
@@ -97,60 +191,57 @@
         <h1 style="margin-top: 50px"><span th:text="${cityName}"></span></h1>
         <h2><span th:text="${currentTime}"></span></h2>
         <div style="display: flex; align-items: center; justify-content: center">
-            <h2><span th:text="${currentTemp}"></span> °C  |</h2>
+            <h2><span th:text="${currentTemp}"></span> °C |</h2>
             <img th:src="@{${weatherIcon}}" class="icon" alt="Weather Icon"/>
         </div>
     </div>
 
-    <div>
-        <h3>Vorhersage für die kommenden Stunden:</h3>
-        <div class="forecast">
-            <div th:each="timeItem : ${tempMap.map().keySet()}" class="forecast-item">
-                <h4><span th:text="${timeItem.toLocalTime()}"></span></h4>
-                <h4><span th:text="${tempMap.map().get(timeItem)}"></span></h4>
+
+    <div class="container">
+        <div class="scroll-container">
+            <div class="wide-content">
+                <table class="table table-responsive">
+                    <thead>
+                    <tr>
+                        <th>Uhrzeit</th>
+                        <!-- Dynamisch generierte Uhrzeiten -->
+                        <th th:each="time : ${tempMap.map().keySet()}"><span th:text="${time.toLocalTime()}"></span>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Temperatur (°C)</td>
+                        <!-- Dynamisch generierte Temperaturen -->
+                        <td th:each="temp : ${tempMap.map().values()}"><span class="spass" th:text="${temp}"></span></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="chart-container">
+                    <canvas id="myChart" style="width:100%; display: inline-block;"></canvas>
+                </div>
             </div>
         </div>
 
-    </div>
-    <div>
-        <h3>10 Tage vorhersage</h3>
-        <div class="forecast">
-            <div th:each="date : ${tenDaysForecast.keySet()}" class="forecast-item">
-                <h4><span th:text="${date}"></span></h4>
-                <h4><span th:text="${tenDaysForecast.get(date)}"></span></h4>
 
+        <div>
+            <h3>10 Tage vorhersage</h3>
+            <div class="forecast">
+                <div th:each="date : ${tenDaysForecast.keySet()}" class="forecast-item">
+                    <h4><span th:text="${date}"></span></h4>
+                    <h4><span th:text="${tenDaysForecast.get(date)}"></span></h4>
+
+                </div>
             </div>
         </div>
 
 
-    </div>
+        <div class="map-container">
+            <h3>Wetterkarte:</h3>
+            <img th:src="${weatherMapUrl}" alt="Wetterkarte" class="map">
+        </div>
 
-    <div class="map-container">
-        <h3>Wetterkarte:</h3>
-        <img th:src="${weatherMapUrl}" alt="Wetterkarte" class="map">
-    </div>
 
-</div>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var tempMap = /* Hier musst du deine Temperaturdaten dynamisch aus Thymeleaf oder einer anderen Quelle einfügen */;
-        Object.keys(tempMap).forEach(function(key, index) {
-            var ctx = document.getElementById('chart' + index).getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: tempMap[key].labels,
-                    datasets: [{
-                        label: 'Temperatur',
-                        data: tempMap[key].data,
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        borderWidth: 1
-                    }]
-                }
-            });
-        });
-    });
-</script>
+    </div>
 </body>
 </html>
