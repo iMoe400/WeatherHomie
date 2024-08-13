@@ -7,13 +7,17 @@ import com.weatherhomie.models.weatherModel.forecastData.TempList;
 import com.weatherhomie.models.weatherModel.forecastData.TimeList;
 import com.weatherhomie.models.weatherModel.timeAndTempMaps.TimeTempMapToday;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.security.KeyStore;
 import java.text.DecimalFormat;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+@Slf4j
 @Service
 public class WeatherService {
 
@@ -81,21 +85,24 @@ public class WeatherService {
         return isDay != 0;
     }
 
-    public Map<LocalDate, Double> get10DaysForecastByCity(City city) {
-        Map<LocalDate, Double> mapson = new LinkedHashMap<>();
-
+    public Map<String, Double> get10DaysForecastByCity(City city) {
+        Map<String, Double> mapson = new LinkedHashMap<>();
         DecimalFormat decimalFormat = new DecimalFormat("#");
         ForecastData forecastData = getForecastForCity(city);
         List<Double> maxTemp9Days = getForecastForCity(city).daily().temperature2mMax();
         List<Double> minTemp9Days = getForecastForCity(city).daily().temperature2mMin();
         Double avg;
-
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM");
         List<LocalDate> date = getForecastForCity(city).daily().time();
         for (int i = 0; i < 9; i++) {
             avg = maxTemp9Days.get(i);
+            if(i != 0 && avg != null){
+                mapson.put(date.get(i).format(dateTimeFormatter), Double.parseDouble(decimalFormat.format(avg)));
+            }
 
-            mapson.put(date.get(i), Double.parseDouble(decimalFormat.format(avg)));
         }
+
+
 
         return mapson;
     }
