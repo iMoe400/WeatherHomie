@@ -3,6 +3,7 @@
 <head>
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <meta charset="UTF-8">
+
     <title>Wetterseite</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
@@ -16,7 +17,7 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 80vw;
             margin: 20px auto;
             background-color: #fff;
             padding: 20px;
@@ -51,12 +52,11 @@
         }
 
         .input {
-            display: inline-block;
-            vertical-align: top;
-            margin: 0 5px;
-            background-color: lightgray;
+            background-color: #fff;
             border-radius: 8px;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 20rem;
+            ;
         }
 
         .map-container {
@@ -64,9 +64,14 @@
             text-align: center;
         }
 
+        .myChart {
+            height: auto;
+            display: inline-block;
+        }
+
         .chart-container {
             position: relative;
-            height: 150px; /* Höhe des Containers verringern */
+            height: 300px;
         }
 
         .map {
@@ -77,85 +82,147 @@
         }
 
         .search-container {
-            text-align: center;
-            margin-bottom: 20px;
+            horiz-align: center;
         }
 
+
         .scroll-container {
-            overflow-x: auto; /* Ermöglicht horizontales Scrollen */
-            width: 100%; /* Stellt die Breite des Containers ein */
+            width: 100%;
+
         }
 
         .wide-content {
-            width: 1500px; /* Setze eine feste Breite, die breiter als der Bildschirm ist, wenn nötig */
+            width: 1500px;
         }
 
-        table, canvas {
-            width: 100%; /* Sorgt dafür, dass Tabelle und Canvas dieselbe Breite haben */
+        table {
+
         }
 
-        canvas {
-            width: 100% !important;
-            height: 100% !important; /* Sicherstellen, dass das Canvas die gesamte Höhe ausfüllt */
-        }
 
         .spass {
             padding-left: 10px;
         }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
     </style>
     <script th:inline="javascript">
         /*<![CDATA[*/
+
+
         document.addEventListener('DOMContentLoaded', function () {
             const ctx = document.getElementById("myChart").getContext('2d');
-            const labels = /*[[${tempMap.map().keySet()}]]*/ []; // Deine Labels für die Uhrzeiten
-            const data = /*[[${tempMap.map().values()}]]*/ []; // Deine Temperaturwerte
+            const time = /*[[${tempMap.map().keySet()}]]*/ [];
+            const temp = /*[[${tempMap.map().values()}]]*/ [];
+
+// Funktion zum Formatieren der Zeit ohne Sekunden und ohne Datum
+            function formatTimeWithoutSeconds(dateString) {
+                const date = new Date(dateString);
+                const hours = date.getHours().toString().padStart(2, '0');
+                const minutes = date.getMinutes().toString().padStart(2, '0');
+                return `${hours}:${minutes}`;
+            }
+
+            // Formatierte Zeit
+            const formattedTime = time.map(formatTimeWithoutSeconds);
+
+            const rain = /*[[${rainList.toArray()}]]*/ [];
+            let minRain = Math.min(...rain);
+            let maxRain = Math.max(...rain);
+            let minTemp = Math.min(...temp);
+            let maxTemp = Math.max(...temp) + 2
+            if(minTemp > 0) {
+                minTemp = minTemp - 2
+            }
+            if (maxRain > 50) {
+                maxRain = 100
+            } else {
+                maxRain = 75
+            }
 
             new Chart(ctx, {
                 type: "line",
                 data: {
-                    labels: labels,
-                    datasets: [{
+                    labels: formattedTime,
+                    datasets: [
+                        {
                         label: 'Temperatur',
-                        data: data,
-                        backgroundColor: "rgba(0,0,255,0.5)",
-                        borderColor: "rgba(0,0,255,1)",
+                        data: temp,
+                        backgroundColor: "rgba(255,40,40,0.5)",
+                        borderColor: "rgba(255,40,40,0.5)",
                         fill: true,
-                    }]
+                        yAxisID: 'y1'
+                        },
+                        {
+                        label: 'Regen',
+                        data: rain,
+                        backgroundColor: "rgba(0,0,255,0.5)",
+                        borderColor: "rgba(0,0,255,0.5)",
+                        fill: true,
+                        yAxisID: 'y2'
+                        }
+                    ]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: true,
-                    aspectRatio: 10,
+                    maintainAspectRatio: false,
+                    aspectRatio: 7,
                     scales: {
                         x: {
-                            display: false, // X-Achse ausblenden
+                            display: true, // X-Achse ausblenden
                             grid: {
                                 display: false, // X-Achsen-Gitterlinien ausblenden
                             }
                         },
-                        y: {
-                            display: false,
+                        y1: {
+                            display: true,
+                            grid: {
+                                display: true, // Y-Achsen-Gitterlinien ausblenden
+                            },
+                            beginAtZero: true,
+                            max: maxTemp,
+                            min: minTemp
+                        },
+                        y2: {
+                            display: true,
                             grid: {
                                 display: false, // Y-Achsen-Gitterlinien ausblenden
                             },
-                            beginAtZero: false
+                            max: maxRain,
+                            min: minRain
+
                         }
                     },
-                    plugins: {
-                        datalabels: {
-                            align: 'top',  // Position der Labels auf der Kurve
-                            anchor: 'end',  // Verankerung der Labels
-                            formatter: function(value, context) {
-                                return value + '°C';  // Textformat für die Labels
-                            },
-                            color: '#000',  // Textfarbe
-                            font: {
-                                weight: 'bold'  // Textgewicht
-                            }
+                    legend: {
+                        display: true,
+                        onClick: function(e, legendItem) {
+                            var index = legendItem.datasetIndex;
+                            var ci = this.chart;
+                            var alreadyHidden = (ci.getDatasetMeta(index).hidden === null) ? false : ci.getDatasetMeta(index).hidden;
+
+                            ci.data.datasets.forEach(function(e, i) {
+                                var meta = ci.getDatasetMeta(i);
+
+                                if (i !== index) {
+                                    if (!alreadyHidden) {
+                                        meta.hidden = meta.hidden === null ? true : null;
+                                    } else if (meta.hidden === null) {
+                                        meta.hidden = true;
+                                    }
+                                } else if (i === index) {
+                                    meta.hidden = null;
+                                }
+                            });
+
+                            ci.update();
                         },
-                        legend: {
-                            display: false // Verstecke die Legende
-                        }
+                    },
+                    tooltips: {
+                        enabled: true
                     },
                     elements: {
                         point: {
@@ -163,10 +230,11 @@
                         },
                         line: {
                             tension: 0.4 // Glättung der Linie
-                        }
+                        },
+
                     }
                 },
-                plugins: [ChartDataLabels] // Hinzufügen des Data Labels Plugins
+
             });
         });
         /*]]>*/
@@ -180,6 +248,7 @@
 
 
 <div class="container">
+<div class="content">
     <div class="search-container">
         <form id="search-form" action="/search" method="get">
             <label>
@@ -218,7 +287,7 @@
                     </tbody>
                 </table>
                 <div class="chart-container">
-                    <canvas id="myChart" style="width:100%; display: inline-block;"></canvas>
+                    <canvas id="myChart" class="myChart"></canvas>
                 </div>
             </div>
         </div>
@@ -243,5 +312,7 @@
 
 
     </div>
+</div>
+</div>
 </body>
 </html>

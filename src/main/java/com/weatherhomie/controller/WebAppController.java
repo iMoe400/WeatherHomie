@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -67,7 +66,12 @@ public class WebAppController {
         LocalDateTime localDateTime = currentTime.toLocalDateTime();
         String iconPath = weatherIconService.getWeatherIcon(cityService.getCityById(cityId));
         Map<String, Double> tenDaysForecast = new LinkedHashMap<>(weatherService.get10DaysForecastByCity(city));
+        List<Double> rainprobabilityForecast = weatherService.getForecastForCity(city).hourly().rain();
+        rainprobabilityForecast.removeIf(Objects::isNull);
 
+
+        System.out.println(rainprobabilityForecast);
+        model.addAttribute("rainList", rainprobabilityForecast);
         model.addAttribute("cityName", city.name());
         model.addAttribute("currentTime", localDateTime.toLocalTime().withNano(0).withSecond(0));
         model.addAttribute("currentTemp", timeAndTempDayMap.map().values().toArray()[0]);
