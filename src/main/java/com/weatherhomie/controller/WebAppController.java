@@ -66,12 +66,12 @@ public class WebAppController {
         LocalDateTime localDateTime = currentTime.toLocalDateTime();
         String iconPath = weatherIconService.getWeatherIcon(cityService.getCityById(cityId));
         Map<String, Double> tenDaysForecast = new LinkedHashMap<>(weatherService.get10DaysForecastByCity(city));
-        List<Double> rainprobabilityForecast = weatherService.getForecastForCity(city).hourly().rain();
-        rainprobabilityForecast.removeIf(Objects::isNull);
+        List<Double> probabilityForecast = weatherService.getForecastForCity(city).hourly().rain();
+        probabilityForecast.removeIf(Objects::isNull);
 
 
-        System.out.println(rainprobabilityForecast);
-        model.addAttribute("rainList", rainprobabilityForecast);
+        System.out.println(probabilityForecast);
+        model.addAttribute("rainList", probabilityForecast);
         model.addAttribute("cityName", city.name());
         model.addAttribute("currentTime", localDateTime.toLocalTime().withNano(0).withSecond(0));
         model.addAttribute("currentTemp", timeAndTempDayMap.map().values().toArray()[0]);

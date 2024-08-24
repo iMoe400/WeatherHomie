@@ -7,7 +7,7 @@
     <title>Wetterseite</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -23,6 +23,20 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-container {
+            horiz-align: center;
+        }
+
+
+        .scroll-container {
+            width: 80vW;
+
+        }
+
+        .wide-content {
+            width: 80vW;
         }
 
         .current-weather {
@@ -54,9 +68,8 @@
         .input {
             background-color: #fff;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 20rem;
-            ;
+            box-shadow: 0 0 300px rgba(0, 0, 0, 0.1);
+            max-width: 20rem;;
         }
 
         .map-container {
@@ -81,27 +94,9 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        .search-container {
-            horiz-align: center;
-        }
-
-
-        .scroll-container {
-            width: 100%;
-
-        }
-
-        .wide-content {
-            width: 1500px;
-        }
 
         table {
-
-        }
-
-
-        .spass {
-            padding-left: 10px;
+            width: 80vW;
         }
 
         .content {
@@ -112,14 +107,12 @@
     </style>
     <script th:inline="javascript">
         /*<![CDATA[*/
-
-
         document.addEventListener('DOMContentLoaded', function () {
             const ctx = document.getElementById("myChart").getContext('2d');
             const time = /*[[${tempMap.map().keySet()}]]*/ [];
             const temp = /*[[${tempMap.map().values()}]]*/ [];
 
-// Funktion zum Formatieren der Zeit ohne Sekunden und ohne Datum
+            // Funktion zum Formatieren der Zeit ohne Sekunden und ohne Datum
             function formatTimeWithoutSeconds(dateString) {
                 const date = new Date(dateString);
                 const hours = date.getHours().toString().padStart(2, '0');
@@ -135,7 +128,7 @@
             let maxRain = Math.max(...rain);
             let minTemp = Math.min(...temp);
             let maxTemp = Math.max(...temp) + 2
-            if(minTemp > 0) {
+            if (minTemp > 0) {
                 minTemp = minTemp - 2
             }
             if (maxRain > 50) {
@@ -144,41 +137,70 @@
                 maxRain = 75
             }
 
+            const opt = {
+                events: false,
+                tooltips: {
+                    enabled: false
+                },
+                hover: {
+                    animationDuration: 0
+                },
+                animation: {
+                    duration: 1,
+                    onComplete: function () {
+                        const chartInstance = this.chart,
+                            ctx = chartInstance.ctx;
+                        ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'bottom';
+
+                        this.data.datasets.forEach(function (dataset, i) {
+                            var meta = chartInstance.controller.getDatasetMeta(i);
+                            meta.data.forEach(function (bar, index) {
+                                const data = dataset.data[index];
+                                ctx.fillText(data, bar._model.x, bar._model.y - 5);
+                            });
+                        });
+                    }
+                }
+            };
+
             new Chart(ctx, {
                 type: "line",
                 data: {
                     labels: formattedTime,
                     datasets: [
                         {
-                        label: 'Temperatur',
-                        data: temp,
-                        backgroundColor: "rgba(255,40,40,0.5)",
-                        borderColor: "rgba(255,40,40,0.5)",
-                        fill: true,
-                        yAxisID: 'y1'
+                            label: 'Temperatur',
+                            data: temp,
+                            backgroundColor: "rgba(255,40,40,0.5)",
+                            borderColor: "rgba(255,40,40,0.5)",
+                            fill: true,
+                            yAxisID: 'yTemp'
                         },
                         {
-                        label: 'Regen',
-                        data: rain,
-                        backgroundColor: "rgba(0,0,255,0.5)",
-                        borderColor: "rgba(0,0,255,0.5)",
-                        fill: true,
-                        yAxisID: 'y2'
+                            label: 'Regen',
+                            data: rain,
+                            backgroundColor: "rgba(0,0,255,0.5)",
+                            borderColor: "rgba(0,0,255,0.5)",
+                            fill: true,
+                            yAxisID: 'yRain'
                         }
                     ]
                 },
                 options: {
+                    options: opt,
                     responsive: true,
                     maintainAspectRatio: false,
                     aspectRatio: 7,
                     scales: {
                         x: {
-                            display: true, // X-Achse ausblenden
+                            display: true, // x-Achse ausblenden
                             grid: {
                                 display: false, // X-Achsen-Gitterlinien ausblenden
                             }
                         },
-                        y1: {
+                        yTemp: {
                             display: true,
                             grid: {
                                 display: true, // Y-Achsen-Gitterlinien ausblenden
@@ -187,8 +209,8 @@
                             max: maxTemp,
                             min: minTemp
                         },
-                        y2: {
-                            display: true,
+                        yRain: {
+                            display: false,
                             grid: {
                                 display: false, // Y-Achsen-Gitterlinien ausblenden
                             },
@@ -199,27 +221,6 @@
                     },
                     legend: {
                         display: true,
-                        onClick: function(e, legendItem) {
-                            var index = legendItem.datasetIndex;
-                            var ci = this.chart;
-                            var alreadyHidden = (ci.getDatasetMeta(index).hidden === null) ? false : ci.getDatasetMeta(index).hidden;
-
-                            ci.data.datasets.forEach(function(e, i) {
-                                var meta = ci.getDatasetMeta(i);
-
-                                if (i !== index) {
-                                    if (!alreadyHidden) {
-                                        meta.hidden = meta.hidden === null ? true : null;
-                                    } else if (meta.hidden === null) {
-                                        meta.hidden = true;
-                                    }
-                                } else if (i === index) {
-                                    meta.hidden = null;
-                                }
-                            });
-
-                            ci.update();
-                        },
                     },
                     tooltips: {
                         enabled: true
@@ -233,8 +234,7 @@
                         },
 
                     }
-                },
-
+                }
             });
         });
         /*]]>*/
@@ -248,71 +248,54 @@
 
 
 <div class="container">
-<div class="content">
-    <div class="search-container">
-        <form id="search-form" action="/search" method="get">
-            <label>
-                <input class="input" type="text" name="q" placeholder="Stadt suchen...">
-            </label>
+    <div class="content">
+        <form class="search-container" id="search-form" action="/search" method="get">
+                <label>
+                    <input class="input" type="text" name="q" placeholder="Stadt suchen...">
+                </label>
         </form>
-    </div>
-    <div class="current-weather">
-        <h1 style="margin-top: 50px"><span th:text="${cityName}"></span></h1>
-        <h2><span th:text="${currentTime}"></span></h2>
-        <div style="display: flex; align-items: center; justify-content: center">
-            <h2><span th:text="${currentTemp}"></span> °C |</h2>
-            <img th:src="@{${weatherIcon}}" class="icon" alt="Weather Icon"/>
-        </div>
-    </div>
 
 
-    <div class="container">
-        <div class="scroll-container">
-            <div class="wide-content">
-                <table class="table table-responsive">
-                    <thead>
-                    <tr>
-                        <th>Uhrzeit</th>
-                        <!-- Dynamisch generierte Uhrzeiten -->
-                        <th th:each="time : ${tempMap.map().keySet()}"><span th:text="${time.toLocalTime()}"></span>
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>Temperatur (°C)</td>
-                        <!-- Dynamisch generierte Temperaturen -->
-                        <td th:each="temp : ${tempMap.map().values()}"><span class="spass" th:text="${temp}"></span></td>
-                    </tr>
-                    </tbody>
-                </table>
-                <div class="chart-container">
-                    <canvas id="myChart" class="myChart"></canvas>
-                </div>
-            </div>
-        </div>
 
 
         <div>
-            <h3>10 Tage vorhersage</h3>
-            <div class="forecast">
-                <div th:each="date : ${tenDaysForecast.keySet()}" class="forecast-item">
-                    <h4><span th:text="${date}"></span></h4>
-                    <h4><span th:text="${tenDaysForecast.get(date)}"></span></h4>
-
+            <div class="scroll-container">
+                <div class="wide-content">
+                    <div class="current-weather">
+                        <h1 style=""><span th:text="${cityName}"></span></h1>
+                        <h2><span th:text="${currentTime}"></span></h2>
+                        <div style="display: flex; align-items: center; justify-content: center">
+                            <h2><span th:text="${currentTemp}"></span> °C |</h2>
+                            <img th:src="@{${weatherIcon}}" class="icon" alt="Weather Icon"/>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="myChart" class="myChart"></canvas>
+                    </div>
                 </div>
             </div>
+
+
+            <div style="padding: 5vh">
+                <h3 style="font-family: 'Calibri Black',serif">8 Tage vorhersage:</h3>
+                <div class="forecast">
+                    <div th:each="date : ${tenDaysForecast.keySet()}" class="forecast-item">
+                        <h4><span th:text="${date}"></span></h4>
+                        <h4><span th:text="${tenDaysForecast.get(date)}"></span></h4>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="map-container">
+                <h3>Wetterkarte:</h3>
+                <img th:src="${weatherMapUrl}" alt="Wetterkarte" class="map">
+            </div>
+
+
         </div>
-
-
-        <div class="map-container">
-            <h3>Wetterkarte:</h3>
-            <img th:src="${weatherMapUrl}" alt="Wetterkarte" class="map">
-        </div>
-
-
     </div>
-</div>
 </div>
 </body>
 </html>
