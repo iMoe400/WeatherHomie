@@ -3,6 +3,7 @@
 <head>
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Wetterseite</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -14,34 +15,32 @@
             background-color: #f0f0f0;
             margin: 0;
             padding: 0;
+            height: 100vH;
+            width: 100%;
+
+
         }
 
         .container {
-            max-width: 80vw;
             margin: 20px auto;
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+
         }
+
 
         .search-container {
             horiz-align: center;
         }
 
-
-        .scroll-container {
-            width: 80vW;
-
-        }
-
-        .wide-content {
-            width: 80vW;
-        }
-
         .current-weather {
             text-align: center;
             margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
         .forecast {
@@ -85,24 +84,78 @@
         .chart-container {
             position: relative;
             height: 300px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            width: 80vW;
+
         }
 
         .map {
-            max-width: 100%;
-            height: auto;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
+        .CityCard{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            margin-top: 20px;
+            width: min-content;
+            width: 100%;
 
-        table {
-            width: 80vW;
+        }
+        @media (max-width: 800px){
+            .CityCard{
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                flex-flow: column;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
+                margin-top: 20px;
+                width: 100vw;
+            }
+        }
+
+
+        .firstRowCityCard {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .cardItem {
+            padding: 10px;
         }
 
         .content {
             display: flex;
             flex-direction: column;
             align-items: center;
+        }
+        .seperateTimeSearchCard{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+        .searchStuff{
+            height: 159px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin: 20px;
+        }
+        @media (max-width: 800px){
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin: 20px;
         }
     </style>
     <script th:inline="javascript">
@@ -247,55 +300,50 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
 
-<div class="container">
-    <div class="content">
-        <form class="search-container" id="search-form" action="/search" method="get">
-                <label>
-                    <input class="input" type="text" name="q" placeholder="Stadt suchen...">
-                </label>
-        </form>
 
-
-
-
-        <div>
-            <div class="scroll-container">
+            <div class="">
                 <div class="wide-content">
-                    <div class="current-weather">
-                        <h1 style=""><span th:text="${cityName}"></span></h1>
-                        <h2><span th:text="${currentTime}"></span></h2>
-                        <div style="display: flex; align-items: center; justify-content: center">
-                            <h2><span th:text="${currentTemp}"></span> °C |</h2>
-                            <img th:src="@{${weatherIcon}}" class="icon" alt="Weather Icon"/>
+
+                    <div class="CityCard">
+                        <div class="seperateTimeSearchCard">
+                            <div class="firstRowCityCard">
+                                <h1 class="cardItem" style=""><span th:text="${cityName}"></span></h1>
+                                <h2 class="cardItem"><span th:text="${currentTime}"></span></h2>
+                            </div>
+                            <div style="display: flex; align-items: center; justify-content: center">
+                                <h2><span th:text="${currentTemp}"></span> °C |</h2>
+                                <img th:src="@{${weatherIcon}}" class="icon" alt="Weather Icon"/>
+                            </div>
+                        </div>
+                        <div class="searchStuff">
+                            <form class="search-container" id="search-form" action="/search" method="get">
+                                <label>
+                                    <input class="input" type="text" name="q" placeholder="Stadt suchen...">
+                                </label>
+                            </form>
                         </div>
                     </div>
                     <div class="chart-container">
                         <canvas id="myChart" class="myChart"></canvas>
                     </div>
-                </div>
-            </div>
+                    <div class="" style="padding: 5vh">
+                        <h3 style="font-family: 'Calibri Black',serif">8 Tage vorhersage:</h3>
+                        <div class="forecast">
+                            <div th:each="date : ${tenDaysForecast.keySet()}" class="forecast-item">
+                                <h4><span th:text="${date}"></span></h4>
+                                <h4><span th:text="${tenDaysForecast.get(date)}"></span></h4>
 
-
-            <div style="padding: 5vh">
-                <h3 style="font-family: 'Calibri Black',serif">8 Tage vorhersage:</h3>
-                <div class="forecast">
-                    <div th:each="date : ${tenDaysForecast.keySet()}" class="forecast-item">
-                        <h4><span th:text="${date}"></span></h4>
-                        <h4><span th:text="${tenDaysForecast.get(date)}"></span></h4>
-
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
+            </div>
 
             <div class="map-container">
                 <h3>Wetterkarte:</h3>
                 <img th:src="${weatherMapUrl}" alt="Wetterkarte" class="map">
             </div>
-
-
-        </div>
-    </div>
-</div>
+       
 </body>
 </html>

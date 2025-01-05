@@ -12,13 +12,14 @@ public class WeatherIconService {
         this.weatherService = weatherService;
     }
 
-    private static final String ICON_BASE_PATH = "/reshotIcons/";
+    private static final String ICON_BASE_PATH = "/images/";
 
     public String getWeatherIcon(City city) {
         int weatherCode = weatherService.getCurrentWeatherCode(city);
+        System.out.println(weatherCode);
         String iconFilename = switch (weatherCode) {
             case 0 ->
-                    weatherService.isDay(city) ? "reshot-icon-sunny-day-KUT6AVN2DH.svg" : "reshot-icon-moon-night-QPHXN87AVD.svg";
+                    weatherService.isDay(city) ? "reshot-icon-sunny-day-KU6T4VN2DH.svg" : "reshot-icon-moon-night-QPHXN87AVD.svg";
             case 1, 2, 3 ->
                     weatherService.isDay(city) ? "reshot-icon-cloud-sun-FZ9WMUH25G.svg" : "reshot-icon-cloud-moon-RTKBMAX968.svg";
             case 45, 48 -> "reshot-icon-cloud-forecast-P7U5KTHQY7.svg";
